@@ -1,5 +1,6 @@
 from util import *
 from HMM import *
+from hmmEM import *
 
 wordDict, tagDict = acquireDict(['语料\\dev.char.bmes', '语料\\test.char.bmes', '语料\\train.char.bmes'])
 
@@ -14,16 +15,23 @@ trainWordLists, trainTagLists = prepareData('语料\\train.char.bmes', wordDict,
 
 testWordLists, testTagLists = prepareData('语料\\test.char.bmes', wordDict, tagDict)
 
-# wordDict = {'红':0, '白':1}
-
-# tagDict = {'盒子1':0, '盒子2':1, '盒子3':2}
-
 hmm = HMM(len(wordDict), len(tagDict))
 
-#hmm.trianUnsup([[0,1,0]], 4)
+discreteHMM = DiscreteHMM(len(tagDict),len(wordDict),100)
+discreteHMM.train_batch(trainWordLists)
 
-hmm.trianUnsup(trainWordLists[:10], 4)
-#hmm.test(testWordLists, testTagLists, wordDict, tagDict)
+print (discreteHMM.emission_prob)
+print (discreteHMM.transmat_prob)
+print (discreteHMM.start_prob)
+
+hmm.emitProb = discreteHMM.emission_prob
+hmm.transitionProb = discreteHMM.transmat_prob
+hmm.initProb = discreteHMM.start_prob
+
+hmm.test(testWordLists, testTagLists, wordDict, tagDict)
+
+
+
 
 
 

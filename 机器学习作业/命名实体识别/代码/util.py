@@ -104,7 +104,7 @@ def extraEduEntity(wordList, tagList, wordDict, tagDict):
     for word, tag in zip(wordList, tagList):
 
         if tag == tagDict['S-EDU']:
-            if flag == False: edu.append(list(wordDict.keys()[word])); EDU.append(''.join(edu)); edu = []; continue
+            if flag == False: edu.append(list(wordDict.keys())[word]); EDU.append(''.join(edu)); edu = []; continue
 
         if tag == tagDict['B-EDU']:
             if flag == False: edu.append(list(wordDict.keys())[word]); flag = True; continue
@@ -124,7 +124,7 @@ def extraTitleEntity(wordList, tagList, wordDict, tagDict):
     for word, tag in zip(wordList, tagList):
 
         if tag == tagDict['S-TITLE']:
-            if flag == False: title.append(list(wordDict.keys()[word])); TITLE.append(''.join(title)); title = [];continue
+            if flag == False: title.append(list(wordDict.keys())[word]); TITLE.append(''.join(title)); title = [];continue
 
         if tag == tagDict['B-TITLE']:
             if flag == False: title.append(list(wordDict.keys())[word]); flag = True; continue

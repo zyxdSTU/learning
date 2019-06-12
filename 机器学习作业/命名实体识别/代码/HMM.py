@@ -1,6 +1,8 @@
 from numpy import *
 import numpy
+import numpy as np
 import operator
+from hmmlearn import hmm
 from util import *
 
 class HMM():
@@ -15,13 +17,16 @@ class HMM():
         self.wordDictSize = wordDictSize
         self.tagDictSize = tagDictSize
 
-        self.transitionProb = numpy.ones((tagDictSize, tagDictSize)) * (1.0 / tagDictSize)
-        self.initProb = numpy.ones(tagDictSize) * (1.0 / tagDictSize)
-        self.emitProb = numpy.ones((tagDictSize, wordDictSize)) * (1.0 / wordDictSize)
+        self.transitionProb = np.random.rand(self.tagDictSize, self.tagDictSize)
+        for index in range(self.tagDictSize):
+            self.transitionProb[index] = self.transitionProb[index] / np.sum(self.transitionProb[index])
 
-        # self.transitionProb = array([[0.5, 0.2, 0.3], [0.3, 0.5, 0.2], [0.2, 0.3, 0.5]])
-        # self.initProb = array([0.2, 0.4, 0.4])
-        # self.emitProb = array([[0.5, 0.5], [0.4, 0.6], [0.7, 0.3]])
+        self.initProb = numpy.random.rand(self.tagDictSize)
+        self.initProb = self.initProb / np.sum(self.initProb)
+
+        self.emitProb = numpy.random.rand(self.tagDictSize, self.wordDictSize)
+        for index in range(self.tagDictSize):
+            self.emitProb[index] = self.emitProb[index] / np.sum(self.emitProb[index])
 
     '''
     无监督学习
@@ -85,10 +90,6 @@ class HMM():
             self.emitProb[self.emitProb == 0] = 1e-10
             self.initProb[self.initProb == 0] = 1e-10
             self.transitionProb[self.transitionProb == 0] = 1e-10
-
-            print (self.transitionProb)
-            print (self.emitProb)
-            print (self.initProb)
 
     '''
     监督学习, 极大似然估计
@@ -192,4 +193,5 @@ class HMM():
         print ('F1:  %f' % F1)
 
 
+   
 
