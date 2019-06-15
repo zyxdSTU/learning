@@ -182,7 +182,10 @@ class HMM():
             preEntity += len(resultPre)
             goldEntity += len(resultRel)
             correctEntity += len(match(resultPre, resultRel))
-        
+
+        if correctEntity == 0: return
+            
+        print("------------------HMM-----------------------")
         print (goldEntity, preEntity, correctEntity)
         precise = 1.0 * correctEntity / preEntity
         recall = 1.0 * correctEntity / goldEntity
