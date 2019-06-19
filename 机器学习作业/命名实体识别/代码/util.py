@@ -33,10 +33,10 @@ def int2str(origin, dictionary):
         for i in range(len(origin)):
             result.append([])
             for j in range(len(origin[i])):
-                result[i].append(keys[origin[i][j]])
+                result[i].append(keys[int(origin[i][j])])
     else:
         for i in range(len(origin)):
-            result.append(keys[origin[i]])
+            result.append(keys[int(origin[i])])
     return result
 
 '''
