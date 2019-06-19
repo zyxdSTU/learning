@@ -1,6 +1,11 @@
 from util import *
 from HMM import *
+<<<<<<< HEAD
 from hmmEM import *
+=======
+from CRF import *
+from easyHmm.hmm import *
+>>>>>>> refs/remotes/origin/master
 
 wordDict, tagDict = acquireDict(['语料\\dev.char.bmes', '语料\\test.char.bmes', '语料\\train.char.bmes'])
 
@@ -17,6 +22,7 @@ hmm = HMM(len(wordDict), len(tagDict))
 hmm.trainSup(str2int(trainWordLists,wordDict), str2int(trainTagLists,tagDict))
 hmm.test(str2int(testWordLists, wordDict), str2int(testTagLists, tagDict), wordDict, tagDict)
 
+<<<<<<< HEAD
 # hmm = HMM(len(wordDict), len(tagDict))
 
 # discreteHMM = DiscreteHMM(len(tagDict),len(wordDict),100)
@@ -34,6 +40,12 @@ hmm.test(str2int(testWordLists, wordDict), str2int(testTagLists, tagDict), wordD
 
 
 
+=======
+crf = CRFModel()
+crf.train(trainWordLists, trainTagLists)
+crf.test(testWordLists, testTagLists, wordDict, tagDict)
+
+>>>>>>> refs/remotes/origin/master
 
 
 
