@@ -2,7 +2,6 @@ from numpy import *
 import numpy
 import numpy as np
 import operator
-from hmmlearn import hmm
 from util import *
 
 class HMM():
