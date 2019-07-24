@@ -17,6 +17,7 @@ class HMM():
         self.wordDictSize = wordDictSize
         self.tagDictSize = tagDictSize
 
+        #初始以及归一化 转移概率矩阵、发射概率矩阵、初始概率矩阵
         self.transitionProb = np.random.rand(self.tagDictSize, self.tagDictSize)
         for index in range(self.tagDictSize):
             self.transitionProb[index] = self.transitionProb[index] / np.sum(self.transitionProb[index])
@@ -28,68 +29,6 @@ class HMM():
         for index in range(self.tagDictSize):
             self.emitProb[index] = self.emitProb[index] / np.sum(self.emitProb[index])
 
-    '''
-    无监督学习
-    iter为迭代次数
-    '''
-    def trianUnsup(self, trainWordLists, iter):
-        for i in range(1, iter+1):
-            print ("iter: ", i)
-            '''
-            E步
-            '''
-            bPostProb = []
-            bAdjProb = numpy.zeros((self.tagDictSize, self.tagDictSize))
-            bInitProb = numpy.zeros((self.tagDictSize))
-
-            for wordList in trainWordLists:
-                alpha = self.forwardAlg(wordList)
-                beta = self.backwardAlg(wordList)
-
-                #后验概率
-                postProb = alpha * beta 
-                for index in range(len(wordList)):
-                    if numpy.sum(postProb[index]) != 0: postProb[index] = postProb[index] / numpy.sum(postProb[index])
-                bPostProb.append(postProb)
-
-                #联合概率
-                adjProb = numpy.zeros((self.tagDictSize, self.tagDictSize))
-                for j in range(len(wordList)):
-                    if j == 0: continue
-                    temp = numpy.outer(alpha[j-1], beta[j] * self.emitProb[:,wordList[j]]) * self.transitionProb
-                    if numpy.sum(temp) != 0: adjProb += temp / numpy.sum(temp)
-
-                #归一化
-                if (numpy.sum(adjProb) != 0): adjProb = (adjProb.T / numpy.sum(postProb[:-1], axis=0)).T
-                bAdjProb += adjProb
-
-                #累加初始状态概率
-                bInitProb += postProb[0]
-            '''
-            M步
-            '''
-            #更新初始概率
-            self.initProb = bInitProb / numpy.sum(bInitProb)
-
-            #更新转移概率
-            self.transitionProb = array([bAdjProb[j] / numpy.sum(bAdjProb[j]) for j in range(self.tagDictSize)])
-
-            #更新观测概率
-            self.emitProb = numpy.zeros((self.tagDictSize, self.wordDictSize))
-            for element, wordList in zip(bPostProb, trainWordLists):
-                temp = numpy.zeros((self.tagDictSize, self.wordDictSize))
-                for j, word in enumerate(wordList):
-                    for k in range(self.tagDictSize):
-                        temp[k, word] = temp[k, word] + element[j][k]
-                temp = (temp.T / numpy.sum(element, axis=0)).T
-                self.emitProb += temp
-
-            for k in range(self.tagDictSize):
-                if numpy.sum(self.emitProb[k]) != 0: self.emitProb[k] = self.emitProb[k] / numpy.sum(self.emitProb[k])
-
-            self.emitProb[self.emitProb == 0] = 1e-10
-            self.initProb[self.initProb == 0] = 1e-10
-            self.transitionProb[self.transitionProb == 0] = 1e-10
 
     '''
     监督学习, 极大似然估计
@@ -170,39 +109,20 @@ class HMM():
         return state
 
     def test(self, testWordLists, testTagLists, wordDict, tagDict):
+        #防止溢出，对参数矩阵取对数
         self.transitionProb = numpy.log10(self.transitionProb)
         self.emitProb = numpy.log10(self.emitProb)
         self.initProb = numpy.log10(self.initProb)
 
-        #real, predict = [], []
+        real, predict = [], []
 
-        goldEntity, preEntity, correctEntity = 0, 0, 0
         for sentence, tag in zip(testWordLists, testTagLists):
             tagPre = self.viterbiAlg(sentence)
 
-            #real.append(int2str(tag, tagDict)); predict.append(int2str(tagPre, tagDict))
+            real.append(int2str(tag, tagDict))
+            predict.append(int2str(tagPre, tagDict))
 
-            resultPre = extraEntity(sentence, tagPre, wordDict, tagDict)
-            resultRel = extraEntity(sentence, tag, wordDict, tagDict)
-            #print (resultPre)
-            preEntity += len(resultPre)
-            goldEntity += len(resultRel)
-            correctEntity += len(match(resultPre, resultRel))
-
-        if correctEntity == 0: return
-        
-
-        print("------------------HMM-----------------------")
-        print (goldEntity, preEntity, correctEntity)
-        precise = 1.0 * correctEntity / preEntity
-        recall = 1.0 * correctEntity / goldEntity
-        F1 = (2 * precise * recall) / (precise + recall)
-        print ('正确率:  %f' % precise)
-        print ('召回率:  %f'% recall)
-        print ('F1:  %f' % F1)
-
-        #print (real[0:50], predict[0:50])
-        #print(classification_report(real, predict, digits=6))
+        print(classification_report(real, predict, digits=6))
 
 
    

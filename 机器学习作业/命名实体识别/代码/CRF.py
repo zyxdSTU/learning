@@ -1,5 +1,5 @@
 from sklearn_crfsuite import CRF
-
+from seqeval.metrics import classification_report
 from util import *
 
 
@@ -25,26 +25,6 @@ class CRFModel(object):
     def test(self, testWordLists, testTagLists, wordDict, tagDict):
         features = [sent2features(s) for s in testWordLists]
         tagPres = self.model.predict(features)
+        print(classification_report(testTagLists, tagPres, digits=6))
 
-        goldEntity, preEntity, correctEntity = 0, 0, 0
-
-        for index in range(len(tagPres)):
-            sentence = str2int(testWordLists[index], wordDict) 
-            tagPre = str2int(tagPres[index], tagDict)
-            tag = str2int(testTagLists[index], tagDict)
-            resultPre = extraEntity(sentence, tagPre, wordDict, tagDict)
-            resultRel = extraEntity(sentence, tag, wordDict, tagDict)
-
-            preEntity += len(resultPre)
-            goldEntity += len(resultRel)
-            correctEntity += len(match(resultPre, resultRel))
-        
-        print("------------------CRF-----------------------")
-        print (goldEntity, preEntity, correctEntity)
-        precise = 1.0 * correctEntity / preEntity
-        recall = 1.0 * correctEntity / goldEntity
-        F1 = (2 * precise * recall) / (precise + recall)
-        print ('正确率:  %f' % precise)
-        print ('召回率:  %f'% recall)
-        print ('F1:  %f' % F1)
 
