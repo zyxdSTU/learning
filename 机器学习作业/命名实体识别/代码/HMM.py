@@ -174,13 +174,13 @@ class HMM():
         self.emitProb = numpy.log10(self.emitProb)
         self.initProb = numpy.log10(self.initProb)
 
-        #real, predict = [], []
+        real, predict = [], []
 
         goldEntity, preEntity, correctEntity = 0, 0, 0
         for sentence, tag in zip(testWordLists, testTagLists):
             tagPre = self.viterbiAlg(sentence)
 
-            #real.append(int2str(tag, tagDict)); predict.append(int2str(tagPre, tagDict))
+            real.append(int2str(tag, tagDict)); predict.append(int2str(tagPre, tagDict))
 
             resultPre = extraEntity(sentence, tagPre, wordDict, tagDict)
             resultRel = extraEntity(sentence, tag, wordDict, tagDict)
@@ -202,7 +202,7 @@ class HMM():
         print ('F1:  %f' % F1)
 
         #print (real[0:50], predict[0:50])
-        #print(classification_report(real, predict, digits=6))
+        print(classification_report(real, predict, digits=6))
 
 
    

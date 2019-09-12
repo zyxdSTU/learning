@@ -1,4 +1,4 @@
-from sklearn_crfsuite import CRF
+#from sklearn_crfsuite import CRF
 
 from util import *
 
